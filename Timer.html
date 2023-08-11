@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Manipulation</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Time Manipulation</h1>
+    <div id="output"></div>
+    <div id="controls">
+      <button onclick="startTimer()">Start Timer</button>
+      <button onclick="startCountdown()">Start Countdown</button>
+      <button onclick="startLoop()">Start Loop</button>
+      <button onclick="stop()">Stop</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+  let audio = new Audio("理想之途.mp3"); // Change this to your alert sound file
+let interval;
+let musicDuration = 5; // Set the music play duration in seconds
+
+  function updateOutput(text) {
+    const outputDiv = document.getElementById("output");
+    outputDiv.innerHTML = text;
+  }
+  function stopAudio() {
+  audio.pause();
+  audio.currentTime = 0;
+}
+  function playAlertSound() {
+    // audio = new Audio("理想之途.mp3"); // Change this to your alert sound file
+    audio.play();
+  }
+  
+  
+  function startTimer() {
+    stopAudio();
+    clearInterval(interval);
+    let startTime = new Date().getTime();
+  
+    interval = setInterval(() => {
+      const currentTime = new Date().getTime();
+      const elapsedTime = (currentTime - startTime) / 1000;
+      updateOutput(`Timer: ${elapsedTime.toFixed(2)} seconds`);
+    }, 1000);
+  }
+  
+  function startCountdown() {
+    stopAudio();
+    clearInterval(interval);
+    let seconds = parseInt(prompt("Enter countdown time in seconds:"));
+  
+    if (isNaN(seconds) || seconds <= 0) {
+      alert("Invalid input. Please enter a positive number.");
+      return;
+    }
+  
+    interval = setInterval(() => {
+      seconds--;
+      updateOutput(`Countdown: ${seconds} seconds`);
+      if (seconds === 0) {
+        clearInterval(interval);
+        playAlertSound();
+      }
+    }, 1000);
+  }
+  
+  function startLoop() {
+    stopAudio();
+    clearInterval(interval);
+    let n = parseInt(prompt("Enter number of loops:"));
+    let seconds1 = parseInt(prompt("Enter first countdown time in seconds:"));
+    let seconds2 = parseInt(prompt("Enter second countdown time in seconds:"));
+  
+    if (isNaN(n) || isNaN(seconds1) || isNaN(seconds2) || n <= 0 || seconds1 <= 0 || seconds2 <= 0) {
+      alert("Invalid input. Please enter positive numbers.");
+      return;
+    }
+  
+    let loopCount = 0;
+    interval = setInterval(() => {
+      if (loopCount === n) {
+        clearInterval(interval);
+        return;
+      }
+  
+      loopCount++;
+      updateOutput(`Loop ${loopCount}`);
+      startCountdownWithAlert(seconds1, seconds2);
+    }, (seconds1 + seconds2) * 1000);
+  }
+
+  function playAudioWithTimeout(duration) {
+  audio.play();
+  setTimeout(() => {
+    stopAudio();
+  }, duration * 1000);
+}
+
+  function startCountdownWithAlert(seconds1, seconds2) {
+  updateOutput(`Countdown: ${seconds1} seconds`);
+  //  playAlertSound();
+  setTimeout(() => {
+    playAudioWithTimeout(musicDuration);
+    updateOutput(`Countdown: ${seconds2} seconds`);
+    playAudioWithTimeout(musicDuration);// playAlertSound();
+  }, seconds1 * 1000);
+}
+  
+  
+  function stop() {
+    stopAudio();
+    clearInterval(interval);
+    updateOutput("");
+  }
+  </script>
+</body>
+</html>
